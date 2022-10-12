@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+  petclinic:
+    container_name: petclinic
+    hostname: petclinic
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+     - SPRING_PROFILES_ACTIVE=mysql
+    depends_on:
+      - mysql
+    networks:
+      - ips
+
+  mysql:
+    container_name: mysql
+    hostname: mysql
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - ips
+
+  nginx:
+    container_name: nginx
+    hostname: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+      - 8085:8085
+    networks:
+      - ips
+
+  jenkins:
+    container_name: jenkins
+    hostname: jenkins
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile
+    networks:
+      - ips
+    volumes:
+      - jenkins-data:/root/.jenkins/
+
+networks:
+    ips:
+        driver: bridge
+        ipam:
+          driver: default
+          config:
+            - subnet: 172.18.0.0/24
+              gateway: 172.18.0.1
+
+volumes:
+  mysql-data:
+  jenkins-data:
