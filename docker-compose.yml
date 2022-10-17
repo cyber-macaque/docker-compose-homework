@@ -52,6 +52,20 @@ services:
     volumes:
       - jenkins-data:/root/.jenkins/
 
+  alpineslave:
+    container_name: alpineslave
+    hostname: alpineslave
+    build:
+      context: ./alpineslave
+      dockerfile: Dockerfile
+    ports:
+      - 5555:8080
+    volumes:
+      - alpineslave-data:/var/lib/alpineslave
+    networks:
+      - ips
+
+
 networks:
     ips:
         driver: bridge
@@ -64,3 +78,4 @@ networks:
 volumes:
   mysql-data:
   jenkins-data:
+  alpineslave-data:
